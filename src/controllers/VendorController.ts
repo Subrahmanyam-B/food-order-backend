@@ -8,7 +8,7 @@ import { Food } from "../models";
 export const VendorLogin = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { email, password } = <VendorLoginInput>req.body;
 
@@ -20,7 +20,7 @@ export const VendorLogin = async (
     const validation = await ValidatePassword(
       password,
       existingVendor.password,
-      existingVendor.salt
+      existingVendor.salt,
     );
 
     if (validation) {
@@ -45,7 +45,7 @@ export const VendorLogin = async (
 export const GetVendorProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const user = req.user;
 
@@ -61,7 +61,7 @@ export const GetVendorProfile = async (
 export const UpdateVendorProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { name, foodType, phone, address } = <EditVendorInputs>req.body;
 
@@ -89,12 +89,11 @@ export const UpdateVendorProfile = async (
 export const UpdateVendorCoverImage = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const user = req.user;
 
   if (user) {
-
     const vendor = await findVendor(user._id);
 
     if (vendor !== null) {
@@ -102,7 +101,7 @@ export const UpdateVendorCoverImage = async (
 
       const images = files.map((file: Express.Multer.File) => file.filename);
 
-      vendor.coverImages.push(...images)
+      vendor.coverImages.push(...images);
 
       const result = await vendor.save();
 
@@ -116,7 +115,7 @@ export const UpdateVendorCoverImage = async (
 export const UpdateVendorService = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const user = req.user;
 
@@ -140,7 +139,7 @@ export const UpdateVendorService = async (
 export const AddFood = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const user = req.user;
 
@@ -180,7 +179,7 @@ export const AddFood = async (
 export const GetFoods = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const user = req.user;
 
@@ -196,4 +195,3 @@ export const GetFoods = async (
 
   return res.json({ message: "Foods Information not found" });
 };
-

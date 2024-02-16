@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
- export interface FoodDoc extends Document {
+export interface FoodDoc extends Document {
   vendorId: string;
   name: string;
   description: string;
@@ -32,7 +32,7 @@ const FoodSchema = new Schema(
         delete ret.updatedAt;
       },
     },
-  }
+  },
 );
 
 const Food = mongoose.model<FoodDoc>("food", FoodSchema);
