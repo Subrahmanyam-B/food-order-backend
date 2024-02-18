@@ -38,6 +38,5 @@ export interface CustomerPayload {
 
 export class OrderInputs {
   _id : string;
-
   unit : number
 }

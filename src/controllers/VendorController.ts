@@ -31,12 +31,10 @@ export const VendorLogin = async (
         foodType: existingVendor.foodType,
       });
 
-      return res.json(signature);
+      return res.json({ token: signature });
     } else {
       return res.json({ message: "Password is invalid" });
     }
-
-    return res.json({ message: "Login Succesfull" });
   }
 
   return res.json({ message: "Invalid login credentials" });
@@ -144,8 +142,9 @@ export const AddFood = async (
   const user = req.user;
 
   if (user) {
-    const { name, description, category, readyTime, foodType, price, images } =
-      <CreateFoodInputs>req.body;
+    const { name, description, category, readyTime, foodType, price } = <
+      CreateFoodInputs
+    >req.body;
 
     const vendor = await findVendor(user._id);
 

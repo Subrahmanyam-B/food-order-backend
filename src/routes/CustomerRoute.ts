@@ -9,6 +9,9 @@ import {
   RequestOtp,
   UpdateCustomerProfile,
   VerifyCustomer,
+  addToCart,
+  deleteCart,
+  getCart,
 } from "../controllers";
 import { Authenticate } from "../middlewares";
 
@@ -38,6 +41,11 @@ router.get("/profile", GetCustomerProfile);
 router.patch("/profile", UpdateCustomerProfile);
 
 // Cart Section
+
+router.get('/cart', getCart);
+router.post('/cart', addToCart);
+router.delete('/cart', deleteCart);
+
 //Order
 
 router.post("/create-order", CreateOrder);
