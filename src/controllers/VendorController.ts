@@ -4,11 +4,12 @@ import { findVendor } from "./AdminController";
 import { GenerateSignature, ValidatePassword } from "../utilities";
 import { CreateFoodInputs } from "../dto/Food.dto";
 import { Food } from "../models";
+import { Order } from "../models/Order";
 
 export const VendorLogin = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { email, password } = <VendorLoginInput>req.body;
 
@@ -20,7 +21,7 @@ export const VendorLogin = async (
     const validation = await ValidatePassword(
       password,
       existingVendor.password,
-      existingVendor.salt,
+      existingVendor.salt
     );
 
     if (validation) {
@@ -43,7 +44,7 @@ export const VendorLogin = async (
 export const GetVendorProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const user = req.user;
 
@@ -59,7 +60,7 @@ export const GetVendorProfile = async (
 export const UpdateVendorProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { name, foodType, phone, address } = <EditVendorInputs>req.body;
 
@@ -87,7 +88,7 @@ export const UpdateVendorProfile = async (
 export const UpdateVendorCoverImage = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const user = req.user;
 
@@ -113,7 +114,7 @@ export const UpdateVendorCoverImage = async (
 export const UpdateVendorService = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const user = req.user;
 
@@ -137,7 +138,7 @@ export const UpdateVendorService = async (
 export const AddFood = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const user = req.user;
 
@@ -178,7 +179,7 @@ export const AddFood = async (
 export const GetFoods = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const user = req.user;
 
@@ -193,4 +194,67 @@ export const GetFoods = async (
   }
 
   return res.json({ message: "Foods Information not found" });
+};
+
+export const GetCurrentOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+
+  if (user) {
+    const orders = await Order.find({ vendorId: user._id }).populate(
+      "items.food"
+    );
+
+    if (orders !== null) {
+      return res.status(200).json(orders);
+    }
+  }
+
+  return res.status(400).json({ message: "Order not found" });
+};
+
+export const ProcessOrder = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const orderID = req.params.id;
+
+  const { status, remarks, time } = req.body;
+
+  if (orderID) {
+    const order = await Order.findById(orderID).populate("items.food");
+
+    if (order !== null) {
+      order.orderStatus = status;
+      order.remarks = remarks;
+      if (time) {
+        order.readyTime = time;
+      }
+      const orderResult = await order.save();
+      if (orderResult !== null) {
+        return res.status(200).json(orderResult);
+      }
+    }
+  }
+
+  return res.status(400).json({ message: "Unable to process order" });
+};
+export const GetOrderDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const orderID = req.params.id;
+
+  if (orderID) {
+    const order = await Order.find({ orderID: orderID }).populate("items.food");
+
+    if (order !== null) {
+      return res.status(200).json(order);
+    }
+  }
 };

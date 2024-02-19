@@ -14,7 +14,7 @@ export const findVendor = async (id: string | undefined, email?: string) => {
 export const CreateVendor = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const {
     name,
@@ -62,7 +62,7 @@ export const CreateVendor = async (
 export const GetVendors = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const vendors = await Vendor.find();
 
@@ -76,11 +76,11 @@ export const GetVendors = async (
 export const GetVendorByID = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
-  const vendorID = req.params.id;
+  const vendorId = req.params.id;
 
-  const vendor = await findVendor(vendorID);
+  const vendor = await findVendor(vendorId);
 
   if (vendor !== null) {
     return res.json(vendor);

@@ -21,7 +21,7 @@ import { Order } from "../models/Order";
 export const CustomerSignUp = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customerInputs = plainToClass(CreateCustomerInputs, req.body);
 
@@ -90,7 +90,7 @@ export const CustomerSignUp = async (
 export const CustomerLogin = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const loginInputs = plainToClass(UserLoginInputs, req.body);
 
@@ -112,7 +112,7 @@ export const CustomerLogin = async (
     const validation = await ValidatePassword(
       password,
       customer.password,
-      customer.salt,
+      customer.salt
     );
 
     if (validation) {
@@ -141,7 +141,7 @@ export const CustomerLogin = async (
 export const VerifyCustomer = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { otp } = req.body;
 
@@ -183,7 +183,7 @@ export const VerifyCustomer = async (
 export const RequestOtp = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -209,7 +209,7 @@ export const RequestOtp = async (
 export const GetCustomerProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -227,7 +227,7 @@ export const GetCustomerProfile = async (
 export const UpdateCustomerProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -265,7 +265,7 @@ export const UpdateCustomerProfile = async (
 export const addToCart = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -285,7 +285,7 @@ export const addToCart = async (
         if (cartItems.length > 0) {
           //check and update items
           let existingFoodItem = cartItems.filter(
-            (item) => item.food._id.toString() === _id,
+            (item) => item.food._id.toString() === _id
           );
 
           if (existingFoodItem.length > 0) {
@@ -318,7 +318,7 @@ export const addToCart = async (
 export const getCart = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -340,7 +340,7 @@ export const getCart = async (
 export const deleteCart = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -362,7 +362,7 @@ export const deleteCart = async (
 export const CreateOrder = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   //grab current logged in user
 
@@ -381,6 +381,8 @@ export const CreateOrder = async (
 
     let netAmount = 0.0;
 
+    let vendorId = "";
+
     const foods = await Food.find()
       .where("_id")
       .in(cart.map((item) => item._id))
@@ -389,6 +391,7 @@ export const CreateOrder = async (
     foods.map((food) => {
       cart.map(({ _id, unit }) => {
         if (food._id == _id) {
+          vendorId = food.vendorId;
           netAmount += food.price * unit;
           cartItems.push({ food, unit });
         }
@@ -398,15 +401,22 @@ export const CreateOrder = async (
     if (cartItems) {
       const currentOrder = await Order.create({
         orderID: orderId,
+        vendorId: vendorId,
         items: cartItems,
         totalAmount: netAmount,
         orderDate: new Date(),
         paidThrough: "COD",
         paymentResponse: "",
         orderStatus: "Waiting",
+        remarks: "",
+        deliveryId: "",
+        appliedOffers: false,
+        offerId: "",
+        readyTime: 45,
       });
 
       if (currentOrder) {
+        profile.cart = [] as any;
         profile.orders.push(currentOrder);
         await profile.save();
         return res.status(200).json(currentOrder);
@@ -428,7 +438,7 @@ export const CreateOrder = async (
 export const GetOrders = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -444,7 +454,7 @@ export const GetOrders = async (
 export const GetOrderById = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const orderId = req.params.id;
 
