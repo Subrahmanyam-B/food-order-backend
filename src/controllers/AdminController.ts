@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CreateVendorInput } from "../dto";
-import { Vendor } from "../models";
+import { Delivery, Vendor } from "../models";
 import { GeneratePassword, GenerateSalt } from "../utilities";
 
 export const findVendor = async (id: string | undefined, email?: string) => {
@@ -54,6 +54,8 @@ export const CreateVendor = async (
     rating: 0,
     serviceAvailable: false,
     coverImages: [],
+    lat: 0,
+    lng: 0,
   });
 
   return res.json(createdVendor);
@@ -87,4 +89,38 @@ export const GetVendorByID = async (
   }
 
   return res.json({ message: "Vendors Data not available" });
+};
+
+export const VerifyDeliveryUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { deliveryId, status } = req.body;
+
+  const deliveryProfile = await Delivery.findById(deliveryId);
+
+  if (deliveryProfile) {
+    deliveryProfile.verified = status;
+
+    const result = await deliveryProfile.save();
+
+    return res.status(200).json(result);
+  }
+
+  return res.status(400).json({ message: "Delivery User not found" });
+};
+
+export const GetDeliveryUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const deliveryUsers = await Delivery.find();
+
+  if (deliveryUsers !== null) {
+    return res.status(200).json(deliveryUsers);
+  }
+
+  return res.status(400).json({ message: "Delivery User not found" });
 };

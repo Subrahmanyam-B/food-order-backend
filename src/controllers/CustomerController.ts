@@ -16,7 +16,7 @@ import {
   ValidatePassword,
   onRequestOtp,
 } from "../utilities";
-import { Customer, Food, Transaction } from "../models";
+import { Customer, Delivery, Food, Transaction, Vendor } from "../models";
 import { Order } from "../models/Order";
 import { Offer } from "../models/Offer";
 
@@ -417,8 +417,32 @@ const validateTransaction = async (txnId: string) => {
 
 const assignOrderToDelivery = async (orderId: string, vendorId: string) => {
   //find the vendor
-  //find the nearest delivery person
-  //assign delivery person and update the deliveryId
+
+  const vendor = await Vendor.findById(vendorId);
+  if (vendor) {
+    const areaCode = vendor.pincode;
+    const vendorLat = vendor.lat;
+    const vendorLng = vendor.lng;
+
+    const deliveryPerson = await Delivery.find({
+      pincode: areaCode,
+      verified: true,
+      isAvailable: true,
+    });
+    //find the nearest delivery person
+
+    if (deliveryPerson) {
+      const currentOrder = await Order.findById(orderId);
+
+      if (currentOrder) {
+        currentOrder.deliveryId = deliveryPerson[0]._id;
+        const respone = await currentOrder.save();
+
+        console.log("Delivery User Assigned");
+      }
+    }
+    //assign delivery person and update the deliveryId
+  }
 };
 
 /** ----------------Order Section ----------------------**/
@@ -486,6 +510,8 @@ export const CreateOrder = async (
       currentTransaction.vendorId = vendorId;
       currentTransaction.orderId = orderId;
       currentTransaction.status = "CONFIRMED";
+
+      assignOrderToDelivery(currentOrder._id, vendorId);
 
       if (currentOrder) {
         profile.cart = [] as any;
