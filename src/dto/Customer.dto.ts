@@ -36,7 +36,13 @@ export interface CustomerPayload {
   verified: boolean;
 }
 
+export interface CartItems {
+  _id: string;
+  unit: number;
+}
+
 export class OrderInputs {
-  _id : string;
-  unit : number
+  txnId: string;
+  amount: string;
+  items: [CartItems];
 }

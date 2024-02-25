@@ -1,14 +1,17 @@
 import express, { Request, Response, NextFunction } from "express";
 import {
   CreateOrder,
+  CreatePayment,
   CustomerLogin,
   CustomerSignUp,
+  GetAvailableOffers,
   GetCustomerProfile,
   GetOrderById,
   GetOrders,
   RequestOtp,
   UpdateCustomerProfile,
   VerifyCustomer,
+  VerifyOffer,
   addToCart,
   deleteCart,
   getCart,
@@ -42,9 +45,12 @@ router.patch("/profile", UpdateCustomerProfile);
 
 // Cart Section
 
-router.get('/cart', getCart);
-router.post('/cart', addToCart);
-router.delete('/cart', deleteCart);
+router.get("/cart", getCart);
+router.post("/cart", addToCart);
+router.delete("/cart", deleteCart);
+
+//Offer Section
+router.get("/offer/verify/:id", VerifyOffer);
 
 //Order
 
@@ -53,5 +59,6 @@ router.get("/orders", GetOrders);
 router.get("/order/:id", GetOrderById);
 
 //Payment
+router.post("/create-payment", CreatePayment);
 
 export { router as CustomerRoute };

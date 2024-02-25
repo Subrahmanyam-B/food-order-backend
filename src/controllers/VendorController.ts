@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { EditVendorInputs, VendorLoginInput } from "../dto";
+import { CreateOfferInput, EditVendorInputs, VendorLoginInput } from "../dto";
 import { findVendor } from "./AdminController";
 import { GenerateSignature, ValidatePassword } from "../utilities";
 import { CreateFoodInputs } from "../dto/Food.dto";
-import { Food } from "../models";
+import { Food, Transaction } from "../models";
 import { Order } from "../models/Order";
+import { Offer } from "../models/Offer";
 
 export const VendorLogin = async (
   req: Request,
@@ -257,4 +258,161 @@ export const GetOrderDetails = async (
       return res.status(200).json(order);
     }
   }
+};
+
+export const GetOffers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+
+  if (user) {
+    const offers = await Offer.find({}).populate("vendors");
+    if (offers !== null) {
+      let myOffers = Array();
+
+      offers.map((offer) => {
+        if (offer.vendors) {
+          offer.vendors.map((vendor) => {
+            if (vendor._id.toString() === user._id.toString()) {
+              myOffers.push(offer);
+            }
+          });
+        }
+
+        if (offer.offerType === "GENERIC") {
+          myOffers.push(offer);
+        }
+      });
+
+      return res.status(200).json(myOffers);
+    }
+  }
+  return res.status(400).json({ message: "Offers not found" });
+};
+
+export const CreateOffer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+
+  if (user) {
+    const {
+      title,
+      offerType,
+      offerAmount,
+      description,
+      minValue,
+      startValidity,
+      endValidity,
+      promoType,
+      promocode,
+      bins,
+      bank,
+      pincode,
+      isActive,
+    } = <CreateOfferInput>req.body;
+
+    const vendor = await findVendor(user._id);
+
+    if (vendor) {
+      const offer = await Offer.create({
+        title,
+        offerType,
+        offerAmount,
+        description,
+        minValue,
+        startValidity,
+        endValidity,
+        promoType,
+        promocode,
+        bins,
+        bank,
+        pincode,
+        isActive,
+        vendors: [vendor],
+      });
+
+      return res.status(200).json(offer);
+    }
+  }
+
+  return res.status(400).json({ message: "Unable to create offer" });
+};
+
+export const EditOffer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+
+  const offerId = req.params.id;
+
+  const {
+    title,
+    offerType,
+    offerAmount,
+    description,
+    minValue,
+    startValidity,
+    endValidity,
+    promoType,
+    promocode,
+    bins,
+    bank,
+    pincode,
+    isActive,
+  } = <CreateOfferInput>req.body;
+
+  if (user) {
+    const existingOffer = await Offer.findById(offerId);
+
+    const vendor = await findVendor(user._id);
+
+    if (existingOffer) {
+      if (vendor) {
+        existingOffer.title = title;
+        existingOffer.offerType = offerType;
+        existingOffer.offerAmount = offerAmount;
+        existingOffer.description = description;
+        existingOffer.minValue = minValue;
+        existingOffer.startValidity = startValidity;
+        existingOffer.endValidity = endValidity;
+        existingOffer.promoType = promoType;
+        existingOffer.promocode = promocode;
+        existingOffer.bins = bins;
+        existingOffer.bank = bank;
+        existingOffer.pincode = pincode;
+        existingOffer.isActive = isActive;
+
+        const result = existingOffer.save();
+
+        return res.status(200).json(existingOffer);
+      }
+    }
+  }
+
+  return res.status(400).json({ message: "Unable to edit offer" });
+};
+
+export const GetTransactions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const vendor = req.user;
+
+  if (vendor) {
+    const transactions = await Transaction.find({ vendorId: vendor._id });
+
+    if (transactions !== null) {
+      return res.status(200).json(transactions);
+    }
+  }
+
+  return res.status(400).json({ messages: "Error fetching Transactions" });
 };
