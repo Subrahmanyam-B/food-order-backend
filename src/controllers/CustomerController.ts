@@ -511,13 +511,13 @@ export const CreateOrder = async (
       currentTransaction.orderId = orderId;
       currentTransaction.status = "CONFIRMED";
 
-      assignOrderToDelivery(currentOrder._id, vendorId);
-
       if (currentOrder) {
         profile.cart = [] as any;
         profile.orders.push(currentOrder);
         await profile.save();
         await currentTransaction.save();
+
+        assignOrderToDelivery(currentOrder._id, vendorId);
         return res.status(200).json(currentOrder);
       }
     }
