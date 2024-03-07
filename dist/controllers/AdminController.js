@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetVendorByID = exports.GetVendors = exports.CreateVendor = exports.findVendor = void 0;
+exports.GetDeliveryUser = exports.VerifyDeliveryUser = exports.GetVendorByID = exports.GetVendors = exports.CreateVendor = exports.findVendor = void 0;
 const models_1 = require("../models");
 const utilities_1 = require("../utilities");
 const findVendor = (id, email) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,6 +46,8 @@ const CreateVendor = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         rating: 0,
         serviceAvailable: false,
         coverImages: [],
+        lat: 0,
+        lng: 0,
     });
     return res.json(createdVendor);
 });
@@ -59,12 +61,31 @@ const GetVendors = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.GetVendors = GetVendors;
 const GetVendorByID = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const vendorID = req.params.id;
-    const vendor = yield (0, exports.findVendor)(vendorID);
+    const vendorId = req.params.id;
+    const vendor = yield (0, exports.findVendor)(vendorId);
     if (vendor !== null) {
         return res.json(vendor);
     }
     return res.json({ message: "Vendors Data not available" });
 });
 exports.GetVendorByID = GetVendorByID;
+const VerifyDeliveryUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { deliveryId, status } = req.body;
+    const deliveryProfile = yield models_1.Delivery.findById(deliveryId);
+    if (deliveryProfile) {
+        deliveryProfile.verified = status;
+        const result = yield deliveryProfile.save();
+        return res.status(200).json(result);
+    }
+    return res.status(400).json({ message: "Delivery User not found" });
+});
+exports.VerifyDeliveryUser = VerifyDeliveryUser;
+const GetDeliveryUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const deliveryUsers = yield models_1.Delivery.find();
+    if (deliveryUsers !== null) {
+        return res.status(200).json(deliveryUsers);
+    }
+    return res.status(400).json({ message: "Delivery User not found" });
+});
+exports.GetDeliveryUser = GetDeliveryUser;
 //# sourceMappingURL=AdminController.js.map

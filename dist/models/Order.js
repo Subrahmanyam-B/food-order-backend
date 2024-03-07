@@ -23,41 +23,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Vendor = void 0;
+exports.Order = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const VendorSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    ownerName: { type: String, required: true },
-    foodType: { type: [String] },
-    pincode: { type: String, required: true },
-    address: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-    salt: { type: String, required: true },
-    serviceAvailable: { type: Boolean, required: true },
-    coverImages: { type: [String] },
-    rating: { type: Number },
-    foods: [
+const OrderSchema = new mongoose_1.Schema({
+    orderID: { type: String, required: true },
+    vendorId: { type: String, required: true },
+    items: [
         {
-            type: mongoose_1.default.SchemaTypes.ObjectId,
-            ref: "food",
+            food: { type: mongoose_1.Schema.Types.ObjectId, ref: "food", required: true },
+            unit: { type: Number, required: true },
         },
     ],
-    lat: { type: Number },
-    lng: { type: Number },
+    totalAmount: { type: Number, required: true },
+    paidAmount: { type: Number, required: true },
+    orderDate: { type: Date },
+    orderStatus: { type: String },
+    remarks: { type: String },
+    deliveryId: { type: String },
+    readyTime: { type: Number },
 }, {
     toJSON: {
         transform(doc, ret) {
-            delete ret.password;
-            delete ret.salt;
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;
         },
     },
-    timestamps: true,
 });
-const Vendor = mongoose_1.default.model("vendor", VendorSchema);
-exports.Vendor = Vendor;
-//# sourceMappingURL=Vendor.js.map
+const Order = mongoose_1.default.model("order", OrderSchema);
+exports.Order = Order;
+//# sourceMappingURL=Order.js.map

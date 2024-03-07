@@ -23,41 +23,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Vendor = void 0;
+exports.Transaction = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const VendorSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    ownerName: { type: String, required: true },
-    foodType: { type: [String] },
-    pincode: { type: String, required: true },
-    address: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-    salt: { type: String, required: true },
-    serviceAvailable: { type: Boolean, required: true },
-    coverImages: { type: [String] },
-    rating: { type: Number },
-    foods: [
-        {
-            type: mongoose_1.default.SchemaTypes.ObjectId,
-            ref: "food",
-        },
-    ],
-    lat: { type: Number },
-    lng: { type: Number },
+const TransactionSchema = new mongoose_1.Schema({
+    customer: String,
+    vendorId: String,
+    orderId: String,
+    orderValue: String,
+    offerUsed: String,
+    status: String,
+    paymentMode: String,
+    paymentResponse: String,
 }, {
     toJSON: {
         transform(doc, ret) {
-            delete ret.password;
-            delete ret.salt;
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;
         },
     },
-    timestamps: true,
 });
-const Vendor = mongoose_1.default.model("vendor", VendorSchema);
-exports.Vendor = Vendor;
-//# sourceMappingURL=Vendor.js.map
+const Transaction = mongoose_1.default.model("transaction", TransactionSchema);
+exports.Transaction = Transaction;
+//# sourceMappingURL=Transaction.js.map

@@ -11,6 +11,8 @@ exports.AdminRoute = router;
 router.post("/vendor", controllers_1.CreateVendor);
 router.get("/vendors", controllers_1.GetVendors);
 router.get("/vendor/:id", controllers_1.GetVendorByID);
+router.put("/verify-delivery", controllers_1.VerifyDeliveryUser);
+router.get("/delivery-users", controllers_1.GetDeliveryUser);
 router.get("/", (req, res, next) => {
     res.json({ message: "Hello from Admin" });
 });

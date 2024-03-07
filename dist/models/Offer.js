@@ -23,41 +23,43 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Vendor = void 0;
+exports.Offer = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const VendorSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    ownerName: { type: String, required: true },
-    foodType: { type: [String] },
-    pincode: { type: String, required: true },
-    address: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-    salt: { type: String, required: true },
-    serviceAvailable: { type: Boolean, required: true },
-    coverImages: { type: [String] },
-    rating: { type: Number },
-    foods: [
+const OfferSchema = new mongoose_1.Schema({
+    offerType: { type: String, required: true },
+    title: { type: String, required: true },
+    vendors: [
         {
-            type: mongoose_1.default.SchemaTypes.ObjectId,
-            ref: "food",
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "vendor",
         },
     ],
-    lat: { type: Number },
-    lng: { type: Number },
+    description: { type: String, required: true },
+    minValue: { type: Number, required: true },
+    offerAmount: { type: Number, required: true },
+    startValidity: { type: Date },
+    endValidity: { type: Date },
+    promocode: { type: String, required: true },
+    promoType: { type: String, required: true },
+    bank: [
+        {
+            type: String,
+        },
+    ],
+    bins: [
+        {
+            type: String,
+        },
+    ],
+    pincode: { type: String },
+    isActive: { type: Boolean },
 }, {
     toJSON: {
         transform(doc, ret) {
-            delete ret.password;
-            delete ret.salt;
             delete ret.__v;
-            delete ret.createdAt;
-            delete ret.updatedAt;
         },
     },
-    timestamps: true,
 });
-const Vendor = mongoose_1.default.model("vendor", VendorSchema);
-exports.Vendor = Vendor;
-//# sourceMappingURL=Vendor.js.map
+const Offer = mongoose_1.default.model("offer", OfferSchema);
+exports.Offer = Offer;
+//# sourceMappingURL=Offer.js.map

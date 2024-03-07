@@ -33,9 +33,9 @@ const GenerateSignature = (payload) => {
 };
 exports.GenerateSignature = GenerateSignature;
 const ValidateSignature = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    const signature = req.get('Authorization');
+    const signature = req.get("Authorization");
     if (signature) {
-        const payload = yield jsonwebtoken_1.default.verify(signature.split(' ')[1], config_1.APP_SECRET);
+        const payload = (yield jsonwebtoken_1.default.verify(signature.split(" ")[1], config_1.APP_SECRET));
         req.user = payload;
         return true;
     }
