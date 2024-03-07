@@ -26,16 +26,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Order = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const OrderSchema = new mongoose_1.Schema({
-    orderID: { type: String, required: true },
+    orderID: { type: String, required: true }, //128379
     vendorId: { type: String, required: true },
     items: [
         {
             food: { type: mongoose_1.Schema.Types.ObjectId, ref: "food", required: true },
             unit: { type: Number, required: true },
         },
-    ],
-    totalAmount: { type: Number, required: true },
-    paidAmount: { type: Number, required: true },
+    ], // [{food : 1 , unit : 1}]
+    totalAmount: { type: Number, required: true }, // 329
+    paidAmount: { type: Number, required: true }, // 329
     orderDate: { type: Date },
     orderStatus: { type: String },
     remarks: { type: String },
