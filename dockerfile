@@ -10,7 +10,7 @@ RUN npm install
 
 COPY . .
 
-RUN apt-get update && apt-get install -y curl
+RUN apk --no-cache add curl
 
 RUN npm run build
 
