@@ -11,6 +11,7 @@ RUN npm install
 COPY . .
 
 RUN apk --no-cache add curl
+RUN apk --no-cache add wget
 
 RUN npm run build
 
