@@ -74,7 +74,7 @@ export const CustomerSignUp = async (
 
     //generate signature
     const signature = GenerateSignature({
-      _id: result._id,
+      _id: result._id as string,
       email: result.email,
       verified: result.verified,
     });
@@ -119,7 +119,7 @@ export const CustomerLogin = async (
 
     if (validation) {
       const signature = GenerateSignature({
-        _id: customer._id,
+        _id: customer._id as string,
         email: customer.email,
         verified: customer.verified,
       });
@@ -164,7 +164,7 @@ export const VerifyCustomer = async (
           const updatedCustomerProfile = await profile.save();
 
           const signature = GenerateSignature({
-            _id: updatedCustomerProfile._id,
+            _id: updatedCustomerProfile._id as string,
             email: updatedCustomerProfile.email,
             verified: updatedCustomerProfile.verified,
           });
@@ -435,7 +435,7 @@ const assignOrderToDelivery = async (orderId: string, vendorId: string) => {
       const currentOrder = await Order.findById(orderId);
 
       if (currentOrder) {
-        currentOrder.deliveryId = deliveryPerson[0]._id;
+        currentOrder.deliveryId = deliveryPerson[0]._id as string;
         const respone = await currentOrder.save();
 
         console.log("Delivery User Assigned");
@@ -517,7 +517,7 @@ export const CreateOrder = async (
         await profile.save();
         await currentTransaction.save();
 
-        assignOrderToDelivery(currentOrder._id, vendorId);
+        assignOrderToDelivery(currentOrder._id as string, vendorId);
         return res.status(200).json(currentOrder);
       }
     }

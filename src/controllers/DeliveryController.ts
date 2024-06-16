@@ -64,7 +64,7 @@ export const DeliverySignUp = async (
   if (result) {
     //generate signature
     const signature = GenerateSignature({
-      _id: result._id,
+      _id: result._id as string,
       email: result.email,
       verified: result.verified,
     });
@@ -109,7 +109,7 @@ export const DeliveryLogin = async (
 
     if (validation) {
       const signature = GenerateSignature({
-        _id: deliveryUser._id,
+        _id: deliveryUser._id as string,
         email: deliveryUser.email,
         verified: deliveryUser.verified,
       });

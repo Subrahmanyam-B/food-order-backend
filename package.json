@@ -9,10 +9,6 @@
     "build": "tsc -p .",
     "postinstall": "npm run build"
   },
-  "engines": {
-    "node": "16.20.2",
-    "npm": "8.19.4"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {

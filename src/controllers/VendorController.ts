@@ -27,7 +27,7 @@ export const VendorLogin = async (
 
     if (validation) {
       const signature = GenerateSignature({
-        _id: existingVendor._id,
+        _id: existingVendor._id as string,
         email: existingVendor.email,
         name: existingVendor.name,
         foodType: existingVendor.foodType,
