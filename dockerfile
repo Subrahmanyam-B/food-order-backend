@@ -12,6 +12,13 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 3000
+# Define a build-time argument for the port
+ARG PORT=3001
+
+# Set the environment variable for the port
+ENV PORT $PORT
+
+# Expose the port using the build-time argument
+EXPOSE $PORT
 
 CMD ["npm", "start"]
