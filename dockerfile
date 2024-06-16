@@ -10,6 +10,8 @@ RUN npm install
 
 COPY . .
 
+RUN apt-get update && apt-get install -y curl
+
 RUN npm run build
 
 # Define a build-time argument for the port
