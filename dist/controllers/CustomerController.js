@@ -113,20 +113,22 @@ const VerifyCustomer = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
             console.log(parseInt(otp));
             console.log(profile.otp_expiry);
             console.log(new Date());
-            if (profile.otp === parseInt(otp) && profile.otp_expiry >= new Date()) {
-                console.log(profile);
-                profile.verified = true;
-                const updatedCustomerProfile = yield profile.save();
-                const signature = (0, utilities_1.GenerateSignature)({
-                    _id: updatedCustomerProfile._id,
-                    email: updatedCustomerProfile.email,
-                    verified: updatedCustomerProfile.verified,
-                });
-                return res.status(201).json({
-                    signature: signature,
-                    verified: updatedCustomerProfile.verified,
-                    email: updatedCustomerProfile.email,
-                });
+            if (typeof otp === "string") {
+                if (profile.otp === parseInt(otp) && profile.otp_expiry >= new Date()) {
+                    console.log(profile);
+                    profile.verified = true;
+                    const updatedCustomerProfile = yield profile.save();
+                    const signature = (0, utilities_1.GenerateSignature)({
+                        _id: updatedCustomerProfile._id,
+                        email: updatedCustomerProfile.email,
+                        verified: updatedCustomerProfile.verified,
+                    });
+                    return res.status(201).json({
+                        signature: signature,
+                        verified: updatedCustomerProfile.verified,
+                        email: updatedCustomerProfile.email,
+                    });
+                }
             }
         }
         return res.status(400).json({ message: "Error finding Customer" });
@@ -263,7 +265,7 @@ const CreatePayment = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     const customer = req.user;
     const { amount, paymentMode, offerId } = req.body;
     let payableAmount = Number(amount);
-    if (offerId) {
+    if (typeof offerId === 'string') {
         const appliedOffer = yield Offer_1.Offer.findById(offerId);
         if (appliedOffer) {
             if (appliedOffer.isActive) {
