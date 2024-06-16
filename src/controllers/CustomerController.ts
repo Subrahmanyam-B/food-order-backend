@@ -23,7 +23,7 @@ import { Offer } from "../models/Offer";
 export const CustomerSignUp = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customerInputs = plainToClass(CreateCustomerInputs, req.body);
 
@@ -92,7 +92,7 @@ export const CustomerSignUp = async (
 export const CustomerLogin = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const loginInputs = plainToClass(UserLoginInputs, req.body);
 
@@ -114,7 +114,7 @@ export const CustomerLogin = async (
     const validation = await ValidatePassword(
       password,
       customer.password,
-      customer.salt,
+      customer.salt
     );
 
     if (validation) {
@@ -143,9 +143,9 @@ export const CustomerLogin = async (
 export const VerifyCustomer = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
-  const { otp } = req.body;
+  const { otp }  = req.body;
 
   const customer = req.user;
 
@@ -156,23 +156,25 @@ export const VerifyCustomer = async (
       console.log(parseInt(otp));
       console.log(profile.otp_expiry);
       console.log(new Date());
-      if (profile.otp === parseInt(otp) && profile.otp_expiry >= new Date()) {
-        console.log(profile);
-        profile.verified = true;
+      if (typeof otp === "string") {
+        if (profile.otp === parseInt(otp) && profile.otp_expiry >= new Date()) {
+          console.log(profile);
+          profile.verified = true;
 
-        const updatedCustomerProfile = await profile.save();
+          const updatedCustomerProfile = await profile.save();
 
-        const signature = GenerateSignature({
-          _id: updatedCustomerProfile._id,
-          email: updatedCustomerProfile.email,
-          verified: updatedCustomerProfile.verified,
-        });
+          const signature = GenerateSignature({
+            _id: updatedCustomerProfile._id,
+            email: updatedCustomerProfile.email,
+            verified: updatedCustomerProfile.verified,
+          });
 
-        return res.status(201).json({
-          signature: signature,
-          verified: updatedCustomerProfile.verified,
-          email: updatedCustomerProfile.email,
-        });
+          return res.status(201).json({
+            signature: signature,
+            verified: updatedCustomerProfile.verified,
+            email: updatedCustomerProfile.email,
+          });
+        }
       }
     }
 
@@ -185,7 +187,7 @@ export const VerifyCustomer = async (
 export const RequestOtp = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -211,7 +213,7 @@ export const RequestOtp = async (
 export const GetCustomerProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -229,7 +231,7 @@ export const GetCustomerProfile = async (
 export const UpdateCustomerProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -267,7 +269,7 @@ export const UpdateCustomerProfile = async (
 export const addToCart = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -287,7 +289,7 @@ export const addToCart = async (
         if (cartItems.length > 0) {
           //check and update items
           let existingFoodItem = cartItems.filter(
-            (item) => item.food._id.toString() === _id,
+            (item) => item.food._id.toString() === _id
           );
 
           if (existingFoodItem.length > 0) {
@@ -320,7 +322,7 @@ export const addToCart = async (
 export const getCart = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -342,7 +344,7 @@ export const getCart = async (
 export const deleteCart = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -365,7 +367,7 @@ export const deleteCart = async (
 export const CreatePayment = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -373,7 +375,7 @@ export const CreatePayment = async (
 
   let payableAmount = Number(amount);
 
-  if (offerId) {
+  if (typeof offerId === 'string') {
     const appliedOffer = await Offer.findById(offerId);
 
     if (appliedOffer) {
@@ -447,7 +449,7 @@ const assignOrderToDelivery = async (orderId: string, vendorId: string) => {
 export const CreateOrder = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   //grab current logged in user
 
@@ -535,7 +537,7 @@ export const CreateOrder = async (
 export const GetOrders = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 
@@ -551,7 +553,7 @@ export const GetOrders = async (
 export const GetOrderById = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const orderId = req.params.id;
 
@@ -565,7 +567,7 @@ export const GetOrderById = async (
 export const VerifyOffer = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const customer = req.user;
 

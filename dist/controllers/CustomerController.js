@@ -302,8 +302,6 @@ const assignOrderToDelivery = (orderId, vendorId) => __awaiter(void 0, void 0, v
     const vendor = yield models_1.Vendor.findById(vendorId);
     if (vendor) {
         const areaCode = vendor.pincode;
-        const vendorLat = vendor.lat;
-        const vendorLng = vendor.lng;
         const deliveryPerson = yield models_1.Delivery.find({
             pincode: areaCode,
             verified: true,
